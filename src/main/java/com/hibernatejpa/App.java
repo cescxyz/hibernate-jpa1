@@ -1,10 +1,18 @@
 package com.hibernatejpa;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+
 
 public class App {
 
+	static String db_name = "mydb", db_collection = "mycollection";
+
+	
     public static void main(String[] args){
         guardarUsuarios();
 
@@ -16,7 +24,24 @@ public class App {
         	System.out.println("Salida"+ u.toString());
         }
         
-        guardarUsuarios();
+        //Prueba de mongoDB
+        List<User> user_list = new ArrayList<User>();
+                DBCollection coll = MongoFactory.getCollection(db_name, db_collection);
+                // Fetching cursor object for iterating on the database records.
+                DBCursor cursor = coll.find();  
+                while(cursor.hasNext()) {           
+                    DBObject dbObject = cursor.next();
+                    User user = new User();
+                    user.setId(dbObject.get("id").toString());
+                    user.setName(dbObject.get("name").toString());
+                    // Adding the user details to the list.
+                    user_list.add(user);
+                }
+         for(User u:user_list) {
+        	 System.out.println("Mongo Name: "+u.getName());
+        	 
+         }
+        
     }
 
     public static void guardarUsuarios(){
